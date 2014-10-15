@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Tasks SYSTEM "Tasks-5.1.dtd">
 <!-- eric5 tasks file for project Afficheur -->
-<!-- Saved: 2014-10-15, 14:18:02 -->
+<!-- Saved: 2014-10-15, 18:03:54 -->
 <Tasks version="5.1">
   <ProjectScanFilter></ProjectScanFilter>
   <Task priority="1" completed="False" type="1">
@@ -16,28 +16,10 @@
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-10-15, 14:17:59</Created>
+    <Created>2014-10-15, 17:42:25</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>44</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2014-10-15, 14:17:59</Created>
-    <Resource>
-      <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>52</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2014-10-15, 14:17:59</Created>
-    <Resource>
-      <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>60</Linenumber>
+      <Linenumber>48</Linenumber>
     </Resource>
   </Task>
 </Tasks>

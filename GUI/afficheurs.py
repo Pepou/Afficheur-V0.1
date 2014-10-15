@@ -24,6 +24,9 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         
         self.db = AccesBdd(login, password)
+        list_cmr = self.db.recensement_cmr()
+        #insertion combobox
+        self.comboBox_cmr.addItems(list_cmr)
 
         
         #configuration largeur colonnes tablewidget
@@ -35,27 +38,18 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         
         self.tableWidget_3.setColumnWidth(0,600)
         self.tableWidget_3.setColumnWidth(1,600)
+
     
-    @pyqtSlot()
-    def on_radioButton_temperature_clicked(self):
+    @pyqtSlot(str)
+    def on_comboBox_famille_afficheur_activated(self, p0):
         """
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        self.db.recensement_afficheurs("Afficheur de température")
-    
-    @pyqtSlot()
-    def on_radioButton_vitesse_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
-    @pyqtSlot()
-    def on_radioButton_temps_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        nom_cmr = self.comboBox_cmr.currentText().split() #list avec nom et prenom
+        print(nom_cmr)
+        type_afficheur = self.comboBox_famille_afficheur.currentText()
+        service_site = self.db.recuperation_site_service_cmr(nom_cmr[0], nom_cmr[1])
+        print(service_site)
+        afficheurs = self.db.recensement_afficheurs(type_afficheur, "HLA", "ANG")
+        print(afficheurs)

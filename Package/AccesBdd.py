@@ -27,10 +27,10 @@ class AccesBdd():
     def __del__(self):
         self.connection.close()
         
-    def recensement_afficheurs(self, type_afficheur):
+    def recensement_afficheurs(self, type_afficheur, service, site):
         '''fct pour avoir l'ensemble des afficheurs du type : afficheur_type'''
         table = Table("INSTRUMENTS", self.meta)
-        ins = table.select(table.c.DESIGNATION == type_afficheur)
+        ins = table.select(table.c.IDENTIFICATION).where(and_(table.c.DESIGNATION == type_afficheur , table.c.SITE == site, table.c.AFFECTATION == service))
         result = self.connection.execute(ins)
 
         caracteristiques_afficheurs = []
@@ -39,12 +39,32 @@ class AccesBdd():
           caracteristiques_afficheurs.append(ele)
           identification_afficheurs.append(ele[1])
             
-        print (ele)
-        
-            
+                   
         return caracteristiques_afficheurs, identification_afficheurs
         
-   
+    def recensement_cmr(self):
+        '''fct pour rapatrier le nom+prenom cmr dela table CORRESPONDANTS'''
+        table = Table("CORRESPONDANTS", self.meta)
+        ins = table.select().order_by(table.c.ID_CMR)
+        result = self.connection.execute(ins)
+        
+        cmr = []
+        for ele in result:
+            cmr.append(ele[1] + " "+ele[2])
+
+        return cmr
+    def recuperation_site_service_cmr(self, nom, prenom):
+        '''fct pour recupere le site et le service du cmr'''
+
+        table = Table("CORRESPONDANTS", self.meta)
+        ins = select([table.c.SITE, table.c.SERVICE]).where(and_(table.c.NOM == nom, table.c.PRENOM == prenom))
+
+        result = self.connection.execute(ins)
+         
+        for ele in result:
+            service_site = ele
+        return service_site
+        
     def insert_table_polynome(self,  donnees):
         '''fct qui insert le poly dans la base '''
         
