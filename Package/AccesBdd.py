@@ -26,127 +26,25 @@ class AccesBdd():
         
     def __del__(self):
         self.connection.close()
-    
+        
+    def recensement_afficheurs(self, type_afficheur):
+        '''fct pour avoir l'ensemble des afficheurs du type : afficheur_type'''
+        table = Table("INSTRUMENTS", self.meta)
+        ins = table.select(table.c.DESIGNATION == type_afficheur)
+        result = self.connection.execute(ins)
 
-    def resencement_instrument(self):
-        '''retourne tous les identifications des instruments dans une list'''
-
-        result = self.connection.execute('SELECT "IDENTIFICATION" FROM "INSTRUMENTS"')
-        
-        instruments = []        
-        for ele in result:            
-            instruments.append(ele[0]) #mise en forme
-        return instruments
-    
-    
-    
-    def resencement_instrument_table_polynome_correction(self):
-        '''retourne tous les identifications des instruments dans une list'''
-
-        result = self.connection.execute('SELECT "IDENTIFICATION" FROM "POLYNOME_CORRECTION"')
-        
-        instruments = []        
-        for ele in result:            
-            instruments.append(ele[0]) #mise en forme
-        return instruments
-    
-    
-    def resencement_ce_ident_instrument_table_polynome_correction(self, ident_instrum):
-        '''retourne tous les n °ce d'un instrument dans une list'''
-            
-        result = self.connection.execute('''SELECT "NUM_CERTIFICAT" FROM "POLYNOME_CORRECTION" WHERE "IDENTIFICATION" = '{}' ORDER BY "ID_POLYNOME"'''.format(ident_instrum))
-        
-        ce = []        
-        for ele in result:            
-            ce.append(ele[0]) #mise en forme
-        return ce
-    
-    def renvoie_caracteristique_poly_n_ce(self, n_ce):
-        '''retourne les caracteristique polynome en fct n°CE'''
-            
-        result = self.connection.execute('''SELECT "DATE_ETAL","ORDRE_POLY","COEFF_A","COEFF_B","COEFF_C","ARCHIVAGE","ID_POLYNOME" FROM "POLYNOME_CORRECTION" WHERE "NUM_CERTIFICAT" = '{}' '''.format(n_ce))
-    
-               
-        for ele in result: 
-            carcat_poly = ele
-#            ce.append(ele[0]) #mise en forme
-        return carcat_poly
-        
-    def resencement_instrument_utilises(self):
-        '''retourne tous les identifications des instruments utilisés dans une list'''
-
-        result = self.connection.execute('''SELECT "IDENTIFICATION", "DOMAINE_MESURE", "DESIGNATION" FROM "INSTRUMENTS" WHERE "ETAT_UTILISATION" != 'Sommeil' AND "ETAT_UTILISATION" != 'Réformé' ''')
-        
-        instruments = []        
-        for ele in result:            
-            
-            instruments.append(ele) #mise en forme
-
-        return instruments
-    
-    def resencement_etalonnage_temp(self, date_debut, date_fin):
-        '''retourne les etalonnages effectues entre deux dates dans une list'''
-
-        result = self.connection.execute("""SELECT * FROM "ETALONNAGE_TEMP_ADMINISTRATION" WHERE "DATE_ETAL" >= '{}' AND "DATE_ETAL" <= '{}' ORDER BY "ID_ETAL" """.format(date_debut, date_fin))
-        
-        etalonnage_temp = []        
-        for ele in result:            
-            
-            etalonnage_temp.append(ele) #mise en forme
-
-        return etalonnage_temp
-    
-
-        
-    def recuperation_donnees_etalonnage_n_ce(self, n_ce):
-        '''fct qui va chercher dans la table etalonnage resultat les donnees de l'etalonnage'''
-        
-        
-        result = self.connection.execute('''SELECT "MOYENNE_ETAL_C","MOYENNE_INSTRUM","MOYENNE_CORRECTION","U" FROM "ETALONNAGE_RESULTAT" WHERE "NUM_ETAL" = '{}' ORDER BY "ID_ETAL_RESULT" '''.format(n_ce))
-
-        donnees_etal = []
-        for ele in result:           
-            donnees_etal.append(ele) 
-
-        return donnees_etal
-        
-
-        
-    def return_caracteristiques_intrument(self, identification_instrument):
-        '''retourne certaines caracteristiques instrument
-            constructeur
-            reference_constructeur
-            n_serie'''
-        
-        result = self.connection.execute("""SELECT "CONSTRUCTEUR","REFERENCE_CONSTRUCTEUR","N_SERIE" FROM "INSTRUMENTS" WHERE "IDENTIFICATION" ='{}'""".format(identification_instrument))
-        
-        
+        caracteristiques_afficheurs = []
+        identification_afficheurs = []
         for ele in result:
-            caract_instrument = ele
+          caracteristiques_afficheurs.append(ele)
+          identification_afficheurs.append(ele[1])
             
-        return caract_instrument
+        print (ele)
         
-        
-    def update_table_polynome(self, identification_instrument,  n_ce, donnees):
-        '''fct qui mais à jour le poly dans la base '''
-        
-        #gestion archivage
-        if donnees["ARCHIVAGE"] == False:            
-            self.connection.execute("""UPDATE "POLYNOME_CORRECTION" SET "ARCHIVAGE" = TRUE """\
-                                                    + """WHERE "IDENTIFICATION" ='{}' AND "NUM_CERTIFICAT"!= '{}' """.format(identification_instrument, n_ce))        
-        else:
-            pass
             
-        #update poly
-        self.connection.execute("""UPDATE "POLYNOME_CORRECTION" SET """\
-                                                    + """"DATE_ETAL"= '{}', """.format(donnees["DATE_ETAL"])\
-                                                    +""" "ARCHIVAGE"= '{}', """.format(donnees["ARCHIVAGE"])\
-                                                    +""""ORDRE_POLY"= {},""".format(donnees["ORDRE_POLY"])\
-                                                    +""" "COEFF_A" = {}, """.format(donnees["COEFF_A"]) \
-                                                    +""" "COEFF_B" ={}, """.format(donnees["COEFF_B"])\
-                                                    +""" "COEFF_C" = {}""".format(donnees["COEFF_C"]) \
-                                                    + """WHERE "IDENTIFICATION" ='{}' AND "NUM_CERTIFICAT"= '{}' """.format(identification_instrument, n_ce))
+        return caracteristiques_afficheurs, identification_afficheurs
         
+   
     def insert_table_polynome(self,  donnees):
         '''fct qui insert le poly dans la base '''
         

@@ -7,7 +7,7 @@ Module implementing MainWindow.
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QMainWindow
 from PyQt4.QtGui import QMessageBox
-from GUI.polynome import Polynome
+from GUI.afficheurs import Afficheurs
 from GUI.Ui_connexion2 import Ui_MainWindow
 
 
@@ -35,8 +35,8 @@ class Connexion(QMainWindow, Ui_MainWindow):
         password = self.password.text()
 
         self.close()
-        self.polynome = Polynome(login, password)
-        self.polynome.showMaximized()
+        self.afficheurs = Afficheurs(login, password)
+        self.afficheurs.showMaximized()
         self.close()            
         
         return login, password

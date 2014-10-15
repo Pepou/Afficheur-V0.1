@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric5 project file for project Afficheur -->
-<!-- Saved: 2014-10-09, 18:51:36 -->
+<!-- Saved: 2014-10-15, 13:47:57 -->
 <!-- Copyright (C) 2014 F.Cariou, francois.cariou@efs.sante.fr -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -12,6 +12,7 @@
   <Version>0.1</Version>
   <Author>F.Cariou</Author>
   <Email>francois.cariou@efs.sante.fr</Email>
+  <Eol index="-1"/>
   <Sources>
     <Source>main.py</Source>
     <Source>GUI/connexion2.py</Source>
@@ -20,6 +21,8 @@
     <Source>Package/AccesBdd.py</Source>
     <Source>Package/__init__.py</Source>
     <Source>__init__.py</Source>
+    <Source>GUI/Ui_afficheurs.py</Source>
+    <Source>GUI/afficheurs.py</Source>
   </Sources>
   <Forms>
     <Form>GUI/connexion2.ui</Form>
