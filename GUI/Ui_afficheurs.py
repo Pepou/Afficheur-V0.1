@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Travail\EFS\Travail accreditation\SQ\Developpement Informatique\Afficheur-V0.1\GUI\afficheurs.ui'
 #
-# Created: Thu Oct 30 16:07:10 2014
+# Created: Thu Oct 30 16:16:19 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -156,12 +156,22 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.label_30.setFont(font)
         self.label_30.setObjectName(_fromUtf8("label_30"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_30)
+        self.formLayout.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_30)
         self.spinBox = QtGui.QSpinBox(self.tab)
         self.spinBox.setMinimum(1)
         self.spinBox.setMaximum(3)
         self.spinBox.setObjectName(_fromUtf8("spinBox"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.spinBox)
+        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.spinBox)
+        self.label_32 = QtGui.QLabel(self.tab)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Calibri"))
+        font.setPointSize(12)
+        self.label_32.setFont(font)
+        self.label_32.setObjectName(_fromUtf8("label_32"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_32)
+        self.comboBox_4 = QtGui.QComboBox(self.tab)
+        self.comboBox_4.setObjectName(_fromUtf8("comboBox_4"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.comboBox_4)
         self.verticalLayout_7.addLayout(self.formLayout)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -597,6 +607,7 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">N° Serie</span></p></body></html>", None))
         self.label_17.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Identification Etalon</p></body></html>", None))
         self.label_30.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\">Nombre point contrôle</p></body></html>", None))
+        self.label_32.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt;\">N°Certificat Polynome</span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Configuration", None))
         self.label.setText(_translate("MainWindow", "Resolution", None))
         self.label_2.setText(_translate("MainWindow", "EMT", None))

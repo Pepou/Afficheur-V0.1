@@ -123,3 +123,11 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         
         for i in range(nbr_pt+1, 4): #+1 car s'arrete avant la derniere valeur
            self.onglet[i].setEnabled(False)
+    
+    @pyqtSlot(int)
+    def on_comboBox_ident_etalon_activated(self, index):
+        """
+        Slot documentation goes here.
+        """
+        # TODO: not implemented yet
+        raise NotImplementedError
