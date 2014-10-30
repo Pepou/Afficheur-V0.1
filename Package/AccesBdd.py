@@ -8,6 +8,8 @@ class AccesBdd():
     '''class gerant la bdd'''
     
     def __init__(self, login, password):
+        
+
         self.namebdd = "Labo_Metro_Test"#"Labo_Metro_Prod"
         self.adressebdd = "localhost" # "10.42.1.74"   #"localhost"            
         self.portbdd = "5432"
@@ -24,23 +26,50 @@ class AccesBdd():
         self.session = Session.configure(bind=self.engine)
         
         
+#        for 
+        
     def __del__(self):
         self.connection.close()
         
     def recensement_afficheurs(self, type_afficheur, service, site):
         '''fct pour avoir l'ensemble des afficheurs du type : afficheur_type'''
+        
         table = Table("INSTRUMENTS", self.meta)
-        ins = table.select(table.c.IDENTIFICATION).where(and_(table.c.DESIGNATION == type_afficheur , table.c.SITE == site, table.c.AFFECTATION == service))
-        result = self.connection.execute(ins)
+        ins = table.select().where(and_(table.c.DESIGNATION == type_afficheur, table.c.SITE == site))#, table.c.AFFECTATION == service))
 
-        caracteristiques_afficheurs = []
+        result = self.connection.execute(ins)
+        
         identification_afficheurs = []
         for ele in result:
-          caracteristiques_afficheurs.append(ele)
           identification_afficheurs.append(ele[1])
-            
-                   
-        return caracteristiques_afficheurs, identification_afficheurs
+          
+        return  identification_afficheurs
+        
+    def recensement_etalons(self, type_afficheur, service, site, designation_etalon):
+        '''fct pour avoir l'ensemble des afficheurs du type : afficheur_type'''
+        
+        table = Table("INSTRUMENTS", self.meta)
+        ins = table.select().where(and_(table.c.DOMAINE_MESURE == type_afficheur, table.c.SITE == site, table.c.DESIGNATION == designation_etalon))#, table.c.AFFECTATION == service))
+
+        result = self.connection.execute(ins)
+        
+        identification_etalon = []
+        for ele in result:
+          identification_etalon.append(ele[1])
+          
+        return  identification_etalon
+        
+    def n_serie_afficheur(self, identification):
+        '''fct qui recupere un n° serie en fct identification affcheur'''
+        
+        table = Table("INSTRUMENTS", self.meta)
+        ins = select([table.c.N_SERIE]).where(table .c.IDENTIFICATION == identification)
+        result = self.connection.execute(ins)    
+        
+        for ele in result:
+            n_serie = ele[0]
+        return n_serie
+        
         
     def recensement_cmr(self):
         '''fct pour rapatrier le nom+prenom cmr dela table CORRESPONDANTS'''
@@ -55,7 +84,7 @@ class AccesBdd():
         return cmr
     def recuperation_site_service_cmr(self, nom, prenom):
         '''fct pour recupere le site et le service du cmr'''
-
+        
         table = Table("CORRESPONDANTS", self.meta)
         ins = select([table.c.SITE, table.c.SERVICE]).where(and_(table.c.NOM == nom, table.c.PRENOM == prenom))
 

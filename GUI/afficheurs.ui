@@ -428,6 +428,11 @@
             </column>
             <column>
              <property name="text">
+              <string>Etalon corrigé</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>Afficheur</string>
              </property>
             </column>
@@ -643,6 +648,11 @@
             </column>
             <column>
              <property name="text">
+              <string>Etalon corrigé</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>Afficheur</string>
              </property>
             </column>
@@ -854,6 +864,11 @@
             <column>
              <property name="text">
               <string>Etalon</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Etalon corrigé</string>
              </property>
             </column>
             <column>

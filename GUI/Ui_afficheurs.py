@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Travail\EFS\Travail accreditation\SQ\Developpement Informatique\Afficheur-V0.1\GUI\afficheurs.ui'
 #
-# Created: Wed Oct 15 16:39:31 2014
+# Created: Thu Oct 30 16:07:10 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -208,7 +208,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.tableWidget = QtGui.QTableWidget(self.tab_2)
         self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
-        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(6)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(0, item)
@@ -226,6 +226,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(2, item)
         self.verticalLayout_2.addWidget(self.tableWidget)
         self.formLayout_2 = QtGui.QFormLayout()
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
@@ -336,7 +338,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.verticalLayout_4)
         self.tableWidget_2 = QtGui.QTableWidget(self.tab_3)
         self.tableWidget_2.setObjectName(_fromUtf8("tableWidget_2"))
-        self.tableWidget_2.setColumnCount(2)
+        self.tableWidget_2.setColumnCount(3)
         self.tableWidget_2.setRowCount(6)
         item = QtGui.QTableWidgetItem()
         self.tableWidget_2.setVerticalHeaderItem(0, item)
@@ -354,6 +356,8 @@ class Ui_MainWindow(object):
         self.tableWidget_2.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget_2.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget_2.setHorizontalHeaderItem(2, item)
         self.verticalLayout_3.addWidget(self.tableWidget_2)
         self.formLayout_3 = QtGui.QFormLayout()
         self.formLayout_3.setObjectName(_fromUtf8("formLayout_3"))
@@ -464,7 +468,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addLayout(self.verticalLayout_6)
         self.tableWidget_3 = QtGui.QTableWidget(self.tab_4)
         self.tableWidget_3.setObjectName(_fromUtf8("tableWidget_3"))
-        self.tableWidget_3.setColumnCount(2)
+        self.tableWidget_3.setColumnCount(3)
         self.tableWidget_3.setRowCount(6)
         item = QtGui.QTableWidgetItem()
         self.tableWidget_3.setVerticalHeaderItem(0, item)
@@ -482,6 +486,8 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget_3.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget_3.setHorizontalHeaderItem(2, item)
         self.verticalLayout_5.addWidget(self.tableWidget_3)
         self.formLayout_4 = QtGui.QFormLayout()
         self.formLayout_4.setObjectName(_fromUtf8("formLayout_4"))
@@ -609,6 +615,8 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Etalon", None))
         item = self.tableWidget.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Etalon corrigé", None))
+        item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Afficheur", None))
         self.label_3.setText(_translate("MainWindow", "Moyenne Etalon", None))
         self.label_4.setText(_translate("MainWindow", "Moyenne Afficheur", None))
@@ -634,6 +642,8 @@ class Ui_MainWindow(object):
         item = self.tableWidget_2.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Etalon", None))
         item = self.tableWidget_2.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Etalon corrigé", None))
+        item = self.tableWidget_2.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Afficheur", None))
         self.label_14.setText(_translate("MainWindow", "Moyenne Etalon", None))
         self.label_15.setText(_translate("MainWindow", "Moyenne Afficheur", None))
@@ -659,6 +669,8 @@ class Ui_MainWindow(object):
         item = self.tableWidget_3.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Etalon", None))
         item = self.tableWidget_3.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Etalon corrigé", None))
+        item = self.tableWidget_3.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Afficheur", None))
         self.label_24.setText(_translate("MainWindow", "Moyenne Etalon", None))
         self.label_25.setText(_translate("MainWindow", "Moyenne Afficheur", None))
