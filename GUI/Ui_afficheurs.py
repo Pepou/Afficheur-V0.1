@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Travail\EFS\Travail accreditation\SQ\Developpement Informatique\Afficheur-V0.1\GUI\afficheurs.ui'
 #
-# Created: Thu Oct 30 16:16:19 2014
+# Created: Fri Oct 31 15:18:11 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -169,9 +169,9 @@ class Ui_MainWindow(object):
         self.label_32.setFont(font)
         self.label_32.setObjectName(_fromUtf8("label_32"))
         self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_32)
-        self.comboBox_4 = QtGui.QComboBox(self.tab)
-        self.comboBox_4.setObjectName(_fromUtf8("comboBox_4"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.comboBox_4)
+        self.comboBox_ce_etal = QtGui.QComboBox(self.tab)
+        self.comboBox_ce_etal.setObjectName(_fromUtf8("comboBox_ce_etal"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.comboBox_ce_etal)
         self.verticalLayout_7.addLayout(self.formLayout)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()

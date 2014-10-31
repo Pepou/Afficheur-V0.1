@@ -94,31 +94,52 @@ class AccesBdd():
             service_site = ele
         return service_site
         
-    def insert_table_polynome(self,  donnees):
-        '''fct qui insert le poly dans la base '''
+#    def insert_table_polynome(self,  donnees):
+#        '''fct qui insert le poly dans la base '''
+#        
+#        table = Table("POLYNOME_CORRECTION", self.meta)
+#        ins = table.insert(returning=[table.c.ID_POLYNOME])
+#        result = self.connection.execute(ins, donnees)
+#
+#        id = []
+#        for ele in result:            
+#            id = ele          
+#        return id
         
+#    def insert_polynome_table_etalonnage(self,  donnees):
+#        '''fct qui insert les donnees de construction du poly dans la base '''
+#
+#        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
+#        ins = table.insert()
+#        self.connection.execute(ins, donnees)
+#
+#
+#    def recuperation_donnees_table_polynome_table_etalonnage(self, id_poly):
+#        '''fct pour recuperer les donnnees dans la table polynome-table-etal'''
+#        
+#        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
+#        ins = select([table.c.MOYENNE_ETALON_CORRI, table.c.MOYENNE_INSTRUM, table.c.CORRECTION, table.c.INCERTITUDE]).where(table.c.ID_POLYNOME == id_poly).order_by(table.c.ID_POLY_TABLE_ETAL)
+#        result = self.connection.execute(ins)
+#        
+#        donnees_poly_table_etal = []        
+#        for ele in result:   
+#            donnees_poly_table_etal.append(ele) 
+#        
+#        return donnees_poly_table_etal
+#        
+#    def delete_table_polynome_table_etalonnage(self, id_poly):
+#        '''efface les lignes de la table polynome_donnees_etal'''
+#        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
+#        ins = table.delete(table.c.ID_POLYNOME == id_poly)
+#        self.connection.execute(ins)
+        
+    def recuperation_polynomes_etal(self, identification):
+        '''fct qui va recuperer dans la table polynome corrections
+        les differents poly ainsi que leurs caracteristiques'''
         table = Table("POLYNOME_CORRECTION", self.meta)
-        ins = table.insert(returning=[table.c.ID_POLYNOME])
-        result = self.connection.execute(ins, donnees)
-
-        id = []
-        for ele in result:            
-            id = ele          
-        return id
-        
-    def insert_polynome_table_etalonnage(self,  donnees):
-        '''fct qui insert les donnees de construction du poly dans la base '''
-
-        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
-        ins = table.insert()
-        self.connection.execute(ins, donnees)
-
-
-    def recuperation_donnees_table_polynome_table_etalonnage(self, id_poly):
-        '''fct pour recuperer les donnnees dans la table polynome-table-etal'''
-        
-        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
-        ins = select([table.c.MOYENNE_ETALON_CORRI, table.c.MOYENNE_INSTRUM, table.c.CORRECTION, table.c.INCERTITUDE]).where(table.c.ID_POLYNOME == id_poly).order_by(table.c.ID_POLY_TABLE_ETAL)
+        ins = select([table.c.NUM_CERTIFICAT, table.c.DATE_ETAL, table.c.ORDRE_POLY,\
+                        table.c.COEFF_A, table.c.COEFF_B, table.c.COEFF_C, table.c.ARCHIVAGE])\
+                        .where(table.c.IDENTIFICATION == identification).order_by(table.c.NUM_CERTIFICAT)
         result = self.connection.execute(ins)
         
         donnees_poly_table_etal = []        
@@ -127,9 +148,17 @@ class AccesBdd():
         
         return donnees_poly_table_etal
         
-    def delete_table_polynome_table_etalonnage(self, id_poly):
-        '''efface les lignes de la table polynome_donnees_etal'''
-        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
-        ins = table.delete(table.c.ID_POLYNOME == id_poly)
-        self.connection.execute(ins)
+    def recuperation_polynome_etal_num_ce(self, num_ce):
+        '''fct qui va recuperer dans la table polynome corrections
+        les differents poly ainsi que leurs caracteristiques'''
+        table = Table("POLYNOME_CORRECTION", self.meta)
+        ins = select([table.c.NUM_CERTIFICAT, table.c.DATE_ETAL, table.c.ORDRE_POLY,\
+                        table.c.COEFF_A, table.c.COEFF_B, table.c.COEFF_C, table.c.ARCHIVAGE])\
+                        .where(table.c.NUM_CERTIFICAT == num_ce).order_by(table.c.NUM_CERTIFICAT)
+        result = self.connection.execute(ins)
         
+        donnees_poly_table_etal = []        
+        for ele in result:   
+            donnees_poly_table_etal.append(ele) 
+        
+        return donnees_poly_table_etal
