@@ -8,9 +8,11 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QMainWindow
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from PyQt4.QtGui import QMessageBox
 from .Ui_afficheurs import Ui_MainWindow
 from Package.AccesBdd import AccesBdd
 import decimal
+import numpy as np
 class Afficheurs(QMainWindow, Ui_MainWindow):
     """
     Class documentation goes here.
@@ -174,16 +176,15 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         fct qui calcul valeur corrigée de l'etalon si on ecrit dans la colonne etal brute
         """
         # TODO: not implemented yet
-        colonne = self.tableWidget.currentColumn()
-        ligne = self.tableWidget.currentRow()
-
+        
         #gestion donnees etalon brute
         try:
-            if colonne == 0:
-                print("valeur cell {}".format(self.tableWidget.item(ligne, 0).text()))
+            colonne = self.tableWidget.currentColumn()
+            ligne = self.tableWidget.currentRow()
+          
+            if colonne == 0:                
                 valeur_etal_brute = decimal.Decimal(self.tableWidget.item(ligne, 0).text())
                 
-                print("valeur brute etal {}".format(valeur_etal_brute))
                 if self.ordre_poly_etalon == 1:                
                     correction = self.coeff_a_poly_etalon*valeur_etal_brute + self.coeff_b_poly_etalon
                     
@@ -193,28 +194,88 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                                         + self.coeff_b_poly_etalon * valeur_etal_brute + self.coeff_c_poly_etalon
                 
                 valeur_etal_corri = valeur_etal_brute + correction                
-                
+          
                 #on reaffect les lignes et colonnes de reference afin d'eviter une boucle infinie
-                self.tableWidget.setCurrentCell (ligne,1)
-                self.ecriture_tableau(self.tableWidget, ligne, 1, valeur_etal_corri)
+
+                self.ecriture_tableau(self.tableWidget, ligne, 1, valeur_etal_corri, 'white')
+                self.calculs()
+
+
                 
+            elif colonne == 2:                
+                string_valeur_afficheur = self.tableWidget.item(ligne, 2).text()
+                self.ecriture_tableau(self.tableWidget, ligne, 2, string_valeur_afficheur, 'white')
+                
+                decimal.Decimal(self.tableWidget.item(ligne, 2).text()) # permet de detecter erreur de saisie tru except
+                self.calculs()
+                
+            
             else:
                 pass
+            
+            
+            #Corrections , moyenne des corrections,ecart type_afficheur:
+            
+#            corrections =[]
+#            for i in range(0, 6):
+#                if self.tableWidget.item(i, 1) is not None and self.tableWidget.item(i, 2) is not None:
+#                    corrections.append(decimal.Decimal(self.tableWidget.item(i, 1).text())- decimal.Decimal(self.tableWidget.item(i, 2).text()))
+#                else:
+#                    pass
+#            moyenne_corrections = np.mean(corrections)
+#            ecartype_corrections = np.std(corrections , ddof=1)
+#            self.lineEdit_correction.setText(str(moyenne_corrections))
+#            self.lineEdit_ecartype.setText(str(ecartype_corrections))
+            
+            
+        except decimal.InvalidOperation:
+            
+            if colonne == 0:                
+                self.ecriture_tableau(self.tableWidget, ligne, 1, "Erreur de Saisie donnees etalon brute", 'red')
+            
+            elif colonne == 2:
+
+                self.ecriture_tableau(self.tableWidget, ligne, colonne, string_valeur_afficheur, 'red')
+
+            self.calculs()    
+                
+    def ecriture_tableau(self, nom_tableau_, ligne, colonne, valeur, color):
+        '''fct pour ecrire dans une case du tableau si une erreur fond case rouge'''
+
+        self.tableWidget.setCurrentCell (1,1)
+        item = QtGui.QTableWidgetItem(str(valeur))
+        item.setBackground(QtGui.QColor(color))
+        nom_tableau_.setItem(ligne, colonne, item)
+        
+        
+    def calculs(self):
+        '''fct pour calculer moyenne etalon,moyenne afficheurs ,....'''       
+        try:
+            #calcul automatique moyenne etalon corrigé/afficheur
+            valeurs_etalon_corriges = []
+            valeurs_afficheur = []
+            
+            for i in range (0, 6):
+                if self.tableWidget.item(i, 1) is not None:
+                    valeurs_etalon_corriges.append(decimal.Decimal(self.tableWidget.item(i, 1).text()))
+                else:
+                    pass
+            moyenne_etal_corri = np.mean(valeurs_etalon_corriges)
+            self.lineEdit_moyenne_etalon.setText(str(moyenne_etal_corri))
+                
+            # calcul moyenne afficheur:
+            
+            for i in range(0, 6):
+                if self.tableWidget.item(i, 2) is not None:
+                    valeurs_afficheur.append(decimal.Decimal(self.tableWidget.item(i, 2).text()))
+                else:
+                    pass
+            print(valeurs_afficheur)
+            moyenne_afficheur = np.mean(valeurs_afficheur)
+            self.lineEdit_moyenne_afficheur.setText(str(moyenne_afficheur))
+    
                 
         except decimal.InvalidOperation:
-            self.tableWidget.setCurrentCell (ligne,1)
-            self.ecriture_tableau(self.tableWidget, ligne, 1, "Erreur de Saisie donnees etalon brute")
-
             
-    def ecriture_tableau(self, nom_tableau_, ligne, colonne, valeur):
-        '''fct pour ecrire dans une case du tableau si une erreur fond case rouge'''
-        if valeur == "Erreur de Saisie donnees etalon brute":
-            item = QtGui.QTableWidgetItem(str(valeur))
-            item.setBackground(QtGui.QColor('red'))
-            nom_tableau_.setItem(ligne, colonne, item)
-            
-            self.tableWidget.setCurrentCell (ligne + 1,colonne-1)
-        else:
-            item = QtGui.QTableWidgetItem(str(valeur))            
-            nom_tableau_.setItem(ligne, colonne, item)            
-            self.tableWidget.setCurrentCell (ligne + 1,colonne-1)
+            affichage = "Erreur dans les saisies effectuées"
+            self.lineEdit_moyenne_etalon.setText(affichage)
