@@ -88,6 +88,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         service_site = self.db.recuperation_site_service_cmr(nom_cmr[0], nom_cmr[1])
         
         if service_site[0]not in ["LMS", "SNA", "ANG", "LRY", "LAV"]:           
+            
             afficheurs_nts = self.db.recensement_afficheurs(type_afficheur, "*", "Nantes")            
             afficheurs_nts_nord = self.db.recensement_afficheurs(type_afficheur, "*", "NTSNO")
             afficheurs = list(set(afficheurs_nts+afficheurs_nts_nord))
@@ -95,6 +96,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
             etalons_nts = self.db.recensement_etalons(domaine_mesure, "*", "Nantes", designation_etalon)
             etalons_nts_nord = self.db.recensement_etalons(domaine_mesure, "*", "NTSNO", designation_etalon)
             etalons = list(set( etalons_nts + etalons_nts_nord))
+        
         else:
             afficheurs = self.db.recensement_afficheurs(type_afficheur, "*", service_site[0])
             etalons = self.db.recensement_etalons(domaine_mesure, "*", service_site[0], designation_etalon)
@@ -196,52 +198,31 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                 valeur_etal_corri = valeur_etal_brute + correction                
           
                 #on reaffect les lignes et colonnes de reference afin d'eviter une boucle infinie
-
                 self.ecriture_tableau(self.tableWidget, ligne, 1, valeur_etal_corri, 'white')
                 self.calculs()
-
-
                 
             elif colonne == 2:                
                 string_valeur_afficheur = self.tableWidget.item(ligne, 2).text()
                 self.ecriture_tableau(self.tableWidget, ligne, 2, string_valeur_afficheur, 'white')
                 
                 decimal.Decimal(self.tableWidget.item(ligne, 2).text()) # permet de detecter erreur de saisie tru except
-                self.calculs()
-                
+                self.calculs()                
             
             else:
-                pass
-            
-            
-            #Corrections , moyenne des corrections,ecart type_afficheur:
-            
-#            corrections =[]
-#            for i in range(0, 6):
-#                if self.tableWidget.item(i, 1) is not None and self.tableWidget.item(i, 2) is not None:
-#                    corrections.append(decimal.Decimal(self.tableWidget.item(i, 1).text())- decimal.Decimal(self.tableWidget.item(i, 2).text()))
-#                else:
-#                    pass
-#            moyenne_corrections = np.mean(corrections)
-#            ecartype_corrections = np.std(corrections , ddof=1)
-#            self.lineEdit_correction.setText(str(moyenne_corrections))
-#            self.lineEdit_ecartype.setText(str(ecartype_corrections))
-            
-            
-        except decimal.InvalidOperation:
-            
-            if colonne == 0:                
-                self.ecriture_tableau(self.tableWidget, ligne, 1, "Erreur de Saisie donnees etalon brute", 'red')
-            
-            elif colonne == 2:
+                pass                        
 
+            
+        except decimal.InvalidOperation:            
+            if colonne == 0:                
+                self.ecriture_tableau(self.tableWidget, ligne, 1, "Erreur de Saisie donnees etalon brute", 'red')            
+            elif colonne == 2:
                 self.ecriture_tableau(self.tableWidget, ligne, colonne, string_valeur_afficheur, 'red')
 
             self.calculs()    
                 
     def ecriture_tableau(self, nom_tableau_, ligne, colonne, valeur, color):
         '''fct pour ecrire dans une case du tableau si une erreur fond case rouge'''
-
+        
         self.tableWidget.setCurrentCell (1,1)
         item = QtGui.QTableWidgetItem(str(valeur))
         item.setBackground(QtGui.QColor(color))
@@ -251,7 +232,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
     def calculs(self):
         '''fct pour calculer moyenne etalon,moyenne afficheurs ,....'''       
         try:
-            #calcul automatique moyenne etalon corrigé/afficheur
+            #calcul automatique moyenne etalon corrigé
             valeurs_etalon_corriges = []
             valeurs_afficheur = []
             
@@ -270,10 +251,82 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                     valeurs_afficheur.append(decimal.Decimal(self.tableWidget.item(i, 2).text()))
                 else:
                     pass
-            print(valeurs_afficheur)
+            
             moyenne_afficheur = np.mean(valeurs_afficheur)
             self.lineEdit_moyenne_afficheur.setText(str(moyenne_afficheur))
     
+            #Corrections , moyenne des corrections,ecart type_afficheur:
+            
+            corrections =[]
+            for i in range(0, 6):
+                if self.tableWidget.item(i, 1) is not None and self.tableWidget.item(i, 2) is not None:
+                    corrections.append(decimal.Decimal(self.tableWidget.item(i, 1).text())- decimal.Decimal(self.tableWidget.item(i, 2).text()))
+                else:
+                    pass
+            moyenne_corrections = np.mean(corrections)
+            ecartype_corrections = np.std(corrections , ddof=1)
+            self.lineEdit_correction.setText(str(moyenne_corrections))
+            self.lineEdit_ecartype.setText(str(ecartype_corrections))
+            
+            #Incertitudes:
+                #SAT#
+                ####################################################################################################c
+            if self.comboBox_famille_afficheur.currentText() == "Sonde alarme température":
+                    #etalon
+                    ############################################
+                        #uetalonnage
+                identification_etalon = self.comboBox_ident_etalon.currentText()
+                numero_ce = self.comboBox_ce_etal.currentText().split()
+                
+                U_etalonnage_etalon = self.db.incertitude_etalonnage_temperature(identification_etalon, numero_ce[0])
+                
+                max_u_etalonnage = np.amax(U_etalonnage_etalon)/2
+#                print(max_u_etalonnage)
+                        #umodelisation                
+                table_etal_tlue_correction = self.db.recuperation_corrections_etalonnage_temp(identification_etalon, numero_ce[0])
+                tlue_etalonnage = [x[0] for x in table_etal_tlue_correction ]
+                correction_etalonnage = [decimal.Decimal(x[1]) for x in table_etal_tlue_correction ]
+ 
+                if self.ordre_poly_etalon == 1:
+                    correction_modelisee = [decimal.Decimal(x * self.coeff_a_poly_etalon + self.coeff_b_poly_etalon) for x in tlue_etalonnage]
+                else:                    
+                    correction_modelisee = [decimal.Decimal(x * x* self.coeff_a_poly_etalon + x * self.coeff_b_poly_etalon +self.coeff_c_poly_etalon) for x in tlue_etalonnage]
+
+                residu = []
+                for i in range(0, len(correction_etalonnage)):
+                    valeur_residu = correction_etalonnage[i]-correction_modelisee[i]
+                    residu.append(valeur_residu)
+                max_residu_absolu = np.amax([np.abs(x) for x in residu])
+                                
+                u_modelisation = np.array(max_residu_absolu, dtype=np.float)/np.sqrt(3)
+                        #uresolution
+                resolution_etalon = self.db.recuperation_resolution_etalon(identification_etalon)
+                print(resolution_etalon)
+#                u_resolution_etalon = resolution_etalon/(2*np.sqrt(3))
+                
+                        #uderive (pour linstant 0.15)
+#                u_derive = 0.15/np.sqrt(3)
+                
+                    #sat
+                    #####################################################################################
+                        #uresolution
+                ident_sat = self.comboBox_identification.currentText()
+                resolution = self.db.recuperation_resolution_etalon(ident_sat)
+#                u_resolution = resolution/(2*np.sqrt(3))
+                    
+                        #ufidelite
+#                u_fidelite = ecartype_corrections
+                
+                    #milieu de comparaison
+                    ##################################################################################
+                        #stabilite
+#                u_stab =np.std(np.array(valeurs_etalon_corriges, dtype=np.float))
+                
+#                U_final = 2*np.sqrt(np.power(max_u_etalonnage, 2))#+ np.power(u_modelisation, 2)+
+##                    np.power(u_resolution_etalon, 2) + np.power(u_derive, 2) + np.power(u_resolution, 2)+
+##                    np.power(u_fidelite, 2) + np.power(u_stab, 2))
+##                
+#                self.lineEdit_incertitude.setText(str(U_final))        
                 
         except decimal.InvalidOperation:
             

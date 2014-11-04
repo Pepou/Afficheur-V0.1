@@ -151,6 +151,7 @@ class AccesBdd():
     def recuperation_polynome_etal_num_ce(self, num_ce):
         '''fct qui va recuperer dans la table polynome corrections
         les differents poly ainsi que leurs caracteristiques'''
+        
         table = Table("POLYNOME_CORRECTION", self.meta)
         ins = select([table.c.NUM_CERTIFICAT, table.c.DATE_ETAL, table.c.ORDRE_POLY,\
                         table.c.COEFF_A, table.c.COEFF_B, table.c.COEFF_C, table.c.ARCHIVAGE])\
@@ -162,3 +163,43 @@ class AccesBdd():
             donnees_poly_table_etal.append(ele) 
         
         return donnees_poly_table_etal
+        
+    def incertitude_etalonnage_temperature(self, identification_etalon, numero_ce):
+        '''fct permettant de recupere l'incertitude max d'etalonnage'''
+        
+        table = Table("ETALONNAGE_RESULTAT", self.meta)
+        ins = select([table.c.U]).where(and_(table.c.CODE_INSTRUM == identification_etalon, table.c.NUM_ETAL == numero_ce))
+        result = self.connection.execute(ins)
+        
+        U_etalonnage_etalon =[]
+        for ele in result:
+            U_etalonnage_etalon.append(ele)
+                       
+        return U_etalonnage_etalon
+        
+    def recuperation_corrections_etalonnage_temp(self, identification_etalon, numero_ce):
+        '''fct permettant de recuêrer les donnees d'etalonnage (correction...) 
+        afin de calculer une incertitude de modelisation'''
+        
+        table = Table("ETALONNAGE_RESULTAT", self.meta)
+        ins = select([table.c.MOYENNE_INSTRUM, table.c.MOYENNE_CORRECTION]).where(and_(table.c.CODE_INSTRUM == identification_etalon, table.c.NUM_ETAL == numero_ce))
+        result = self.connection.execute(ins)
+        
+        table_etal_tlue_correction = []
+        for ele in result:
+            table_etal_tlue_correction.append(ele)
+        
+        return table_etal_tlue_correction
+        
+    def recuperation_resolution_etalon(self, identification_etalon):
+        '''fct pour aller cherche la resolution table instrument'''
+        
+        table = Table("INSTRUMENTS", self.meta)
+        ins = select([table.c.RESOLUTION]).where(table.c.IDENTIFICATION == identification_etalon)
+        result = self.connection.execute(ins)
+        
+        
+        for ele in result:
+            resolution = ele[0]
+        
+        return resolution
