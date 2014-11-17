@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric5 project file for project Afficheur -->
-<!-- Saved: 2014-10-15, 13:47:57 -->
+<!-- Saved: 2014-11-17, 10:33:09 -->
 <!-- Copyright (C) 2014 F.Cariou, francois.cariou@efs.sante.fr -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -23,6 +23,7 @@
     <Source>__init__.py</Source>
     <Source>GUI/Ui_afficheurs.py</Source>
     <Source>GUI/afficheurs.py</Source>
+    <Source>Package/RapportAfficheur.py</Source>
   </Sources>
   <Forms>
     <Form>GUI/connexion2.ui</Form>

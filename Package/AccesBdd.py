@@ -59,16 +59,32 @@ class AccesBdd():
           
         return  identification_etalon
         
-    def n_serie_afficheur(self, identification):
-        '''fct qui recupere un n° serie en fct identification affcheur'''
+    def recensement_etalons_vitesse(self, designation_etalon):
+        '''fct pour avoir l'ensemble des afficheurs du type : afficheur_type'''
         
         table = Table("INSTRUMENTS", self.meta)
-        ins = select([table.c.N_SERIE]).where(table .c.IDENTIFICATION == identification)
+        ins = table.select().where(table.c.DESIGNATION == designation_etalon)
+
+        result = self.connection.execute(ins)
+        
+        identification_etalon = []
+        for ele in result:
+          identification_etalon.append(ele[1])
+          
+        return  identification_etalon
+        
+    def caract_afficheur(self, identification):
+        '''fct qui recupere un n° serie , constructeur , type, en fct identification affcheur'''
+        
+        table = Table("INSTRUMENTS", self.meta)
+        ins = select([table.c.N_SERIE, table.c.CONSTRUCTEUR, table.c.TYPE, table.c.commentaire]).where(table .c.IDENTIFICATION == identification)
         result = self.connection.execute(ins)    
         
         for ele in result:
             n_serie = ele[0]
-        return n_serie
+            constructeur = ele[1]
+            type = ele[2]
+        return n_serie, constructeur, type
         
         
     def recensement_cmr(self):
