@@ -142,7 +142,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                 #Recherche n°serie 
         identification = self.comboBox_identification.currentText()
         
-        caract_afficheur = self.db.caract_afficheur( identification)
+        caract_afficheur = self.db.caract_afficheur(identification)
         n_serie = caract_afficheur[0]
         constructeur = caract_afficheur[1]
         type = caract_afficheur[2]
@@ -157,6 +157,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         self.lineEdit_type.clear()
         self.lineEdit_type.setText(type)
         
+        self.textEdit_renseignement_complementaire.clear()
         self.textEdit_renseignement_complementaire.append(renseignement_complementaire)
     
     @pyqtSlot(int)
@@ -164,12 +165,12 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         """
         fct qui autorise l'ecriture des onglet en fct du nbr selectionné
         """        
-        nbr_pt =self.spinBox.value()
+        self.nbr_pt =self.spinBox.value()
         
-        for i in range(nbr_pt+1):
+        for i in range(self.nbr_pt+1):
              self.onglet[i].setEnabled(True)
         
-        for i in range(nbr_pt+1, 4): #+1 car s'arrete avant la derniere valeur
+        for i in range(self.nbr_pt+1, 4): #+1 car s'arrete avant la derniere valeur
            self.onglet[i].setEnabled(False)
     
     @pyqtSlot(int)
@@ -312,7 +313,6 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.doubleSpinBox_resolution_2)
                      
                 self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2)
-
                         
                 
             else:
@@ -534,7 +534,12 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         """
         fct qui enregistre les resultats dans la bdd et genere le rapport
         """
-        
+        resolution_afficheur_list = [self.doubleSpinBox_resolution.value(), self.doubleSpinBox_resolution_2.value(), self.doubleSpinBox_resolution_3.value()]
+        moyenne_etalon_list = [self.lineEdit_moyenne_etalon.text(), self.lineEdit_moyenne_etalon_2.text(), self.lineEdit_moyenne_etalon_3.text()]
+        moyenne_afficheur_list = [self.lineEdit_moyenne_afficheur.text(), self.lineEdit_moyenne_afficheur_2.text(), self.lineEdit_moyenne_afficheur_3.text()]
+        moyenne_corrections_list = [self.lineEdit_moyenne_etalon.text(), self.lineEdit_moyenne_etalon_2.text(), self.lineEdit_moyenne_etalon_3.text()]
+        ecartype_corrections_list = [self.lineEdit_ecartype.text(), self.lineEdit_ecartype_2.text(), self.lineEdit_ecartype_3.text()]
+        conformite_list =[self.lineEdit_conformite.text(), self.lineEdit_conformite_2.text(), self.lineEdit_conformite_3.text()]
         afficheur = {}
 #        afficheur["n_certificat"] = 
 #        afficheur["affectation"] =
@@ -550,12 +555,58 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         afficheur["type"] = self.lineEdit_type.text()
 #        afficheur["resolution"] = 
         afficheur["date_etalonnage"] = self.dateEdit.date().toString('dd/MM/yyyy')
+        
+        if self.comboBox_famille_afficheur.currentText() == "Sonde alarme température":
+            afficheur["n_mode_operatoire"] = "/006"
+        else:
+            afficheur["n_mode_operatoire"] = "/002"
 
-#        afficheur["n_mode_operatoire"] =
         afficheur["etalon"] = self.comboBox_ident_etalon.currentText()
         afficheur["ce_etalon"] = self.comboBox_ce_etal.currentText()
         afficheur["operateur"] = self.comboBox_cmr.currentText()
         afficheur["renseignemment_complementaire"] = self.textEdit_renseignement_complementaire.toPlainText()
-        afficheur["commentaire"] = self.textEdit_complementaire.toPlainText()
-        
+        afficheur["commentaire"] = self.textEdit_commentaire.toPlainText()
+        print("resolution {} , moyenne_etalon {}".format(resolution_afficheur_list, moyenne_etalon_list))
+
+#        i=0
+#        while i < self.nbr_pt:
+#            
+#            
+#            i+=1
+#            
+    
+    @pyqtSlot(str)
+    def on_comboBox_EMT_3_activated(self, p0):
+        """
+        si changement EMT on recalcul tout
+        """
+        self.calculs(self.tableWidget_3, self.lineEdit_moyenne_etalon_3, self.lineEdit_moyenne_afficheur_3, 
+                        self.lineEdit_correction_3, self.lineEdit_ecartype_3, self.lineEdit_incertitude_3, 
+                        self.doubleSpinBox_resolution_3)
+                        
+        self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3)
+
+    
+    @pyqtSlot(str)
+    def on_comboBox_EMT_2_activated(self, p0):
+        """
+        si changement EMT on recalcul tout
+        """
+        self.calculs(self.tableWidget_2, self.lineEdit_moyenne_etalon_2, self.lineEdit_moyenne_afficheur_2, 
+                        self.lineEdit_correction_2, self.lineEdit_ecartype_2, self.lineEdit_incertitude_2, 
+                        self.doubleSpinBox_resolution_2)
+                        
+        self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2)
+   
+    @pyqtSlot(str)
+    def on_comboBox_EMT_activated(self, p0):
+        """
+        si changement EMT on recalcul tout
+        """
+        # TODO: not implemented yet
+        self.calculs(self.tableWidget, self.lineEdit_moyenne_etalon, self.lineEdit_moyenne_afficheur, 
+                            self.lineEdit_correction, self.lineEdit_ecartype, self.lineEdit_incertitude, 
+                            self.doubleSpinBox_resolution)
+                            
+        self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite)
     

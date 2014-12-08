@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Travail\EFS\Travail accreditation\SQ\Developpement Informatique\Afficheur-V0.1\GUI\afficheurs.ui'
 #
-# Created: Mon Nov 17 14:10:59 2014
+# Created: Fri Dec  5 11:49:01 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(982, 706)
+        MainWindow.resize(982, 769)
         self.centralWidget = QtGui.QWidget(MainWindow)
         self.centralWidget.setObjectName(_fromUtf8("centralWidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralWidget)
@@ -608,9 +608,9 @@ class Ui_MainWindow(object):
         self.label_29.setFont(font)
         self.label_29.setObjectName(_fromUtf8("label_29"))
         self.formLayout_4.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_29)
-        self.lineEdit_incertitude_6 = QtGui.QLineEdit(self.tab_4)
-        self.lineEdit_incertitude_6.setObjectName(_fromUtf8("lineEdit_incertitude_6"))
-        self.formLayout_4.setWidget(5, QtGui.QFormLayout.FieldRole, self.lineEdit_incertitude_6)
+        self.lineEdit_conformite_3 = QtGui.QLineEdit(self.tab_4)
+        self.lineEdit_conformite_3.setObjectName(_fromUtf8("lineEdit_conformite_3"))
+        self.formLayout_4.setWidget(5, QtGui.QFormLayout.FieldRole, self.lineEdit_conformite_3)
         self.verticalLayout_5.addLayout(self.formLayout_4)
         self.gridLayout_6.addLayout(self.verticalLayout_5, 0, 0, 1, 1)
         self.tabWidget.addTab(self.tab_4, _fromUtf8(""))

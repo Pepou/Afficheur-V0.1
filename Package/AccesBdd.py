@@ -12,7 +12,7 @@ class AccesBdd():
 
         self.namebdd = "Labo_Metro_Test"#"Labo_Metro_Prod"
         self.adressebdd = "localhost" # "10.42.1.74"   #"localhost"            
-        self.portbdd = "5432"
+        self.portbdd = "5432" 
         self.login = login
         self.password = password
            
@@ -77,14 +77,16 @@ class AccesBdd():
         '''fct qui recupere un n° serie , constructeur , type, en fct identification affcheur'''
         
         table = Table("INSTRUMENTS", self.meta)
-        ins = select([table.c.N_SERIE, table.c.CONSTRUCTEUR, table.c.TYPE, table.c.commentaire]).where(table .c.IDENTIFICATION == identification)
+        ins = select([table.c.N_SERIE, table.c.CONSTRUCTEUR, table.c.TYPE, table.c.COMMENTAIRE]).where(table .c.IDENTIFICATION == identification)
         result = self.connection.execute(ins)    
         
         for ele in result:
             n_serie = ele[0]
             constructeur = ele[1]
             type = ele[2]
-        return n_serie, constructeur, type
+            commentaire = ele[3]
+            
+        return n_serie, constructeur, type, commentaire
         
         
     def recensement_cmr(self):

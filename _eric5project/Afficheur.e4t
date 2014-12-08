@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Tasks SYSTEM "Tasks-5.1.dtd">
 <!-- eric5 tasks file for project Afficheur -->
-<!-- Saved: 2014-11-17, 17:35:08 -->
+<!-- Saved: 2014-12-08, 15:32:47 -->
 <Tasks version="5.1">
   <ProjectScanFilter></ProjectScanFilter>
   <Task priority="1" completed="False" type="1">
@@ -16,7 +16,7 @@
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-11-17, 14:11:59</Created>
+    <Created>2014-12-08, 15:32:44</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
       <Linenumber>76</Linenumber>
@@ -25,7 +25,7 @@
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-11-17, 14:11:59</Created>
+    <Created>2014-12-08, 15:32:44</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
       <Linenumber>141</Linenumber>
@@ -34,19 +34,28 @@
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-11-17, 14:11:59</Created>
+    <Created>2014-12-08, 15:32:44</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>273</Linenumber>
+      <Linenumber>274</Linenumber>
     </Resource>
   </Task>
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-11-17, 14:11:59</Created>
+    <Created>2014-12-08, 15:32:44</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
       <Linenumber>337</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2014-12-08, 15:32:44</Created>
+    <Resource>
+      <Filename>GUI/afficheurs.py</Filename>
+      <Linenumber>606</Linenumber>
     </Resource>
   </Task>
 </Tasks>
