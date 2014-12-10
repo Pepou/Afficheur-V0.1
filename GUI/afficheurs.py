@@ -11,6 +11,7 @@ from PyQt4 import QtCore
 from PyQt4.QtGui import QMessageBox
 from .Ui_afficheurs import Ui_MainWindow
 from Package.AccesBdd import AccesBdd
+from Package.RapportAfficheur import RapportAfficheur
 import decimal
 import numpy as np
 
@@ -236,7 +237,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                             self.lineEdit_correction, self.lineEdit_ecartype, self.lineEdit_incertitude, 
                             self.doubleSpinBox_resolution)
                             
-                self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite)
+                self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite, self.doubleSpinBox_resolution)
                 
             elif colonne == 2:                
                 string_valeur_afficheur = self.tableWidget.item(ligne, 2).text()
@@ -248,7 +249,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                             self.lineEdit_correction, self.lineEdit_ecartype, self.lineEdit_incertitude, 
                             self.doubleSpinBox_resolution)
                             
-                self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite)            
+                self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite, self.doubleSpinBox_resolution)            
             
             else:
                 pass                        
@@ -298,7 +299,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.lineEdit_correction_2, self.lineEdit_ecartype_2, self.lineEdit_incertitude_2, 
                         self.doubleSpinBox_resolution_2)
                         
-                self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2)
+                self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2, self.doubleSpinBox_resolution_2)
                         
                 
                 
@@ -312,7 +313,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.lineEdit_correction_2, self.lineEdit_ecartype_2, self.lineEdit_incertitude_2, 
                         self.doubleSpinBox_resolution_2)
                      
-                self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2)
+                self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2, self.doubleSpinBox_resolution_2)
                         
                 
             else:
@@ -361,7 +362,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.lineEdit_correction_3, self.lineEdit_ecartype_3, self.lineEdit_incertitude_3, 
                         self.doubleSpinBox_resolution_3)
                         
-                self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3)
+                self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3, self.doubleSpinBox_resolution_3)
 
                 
             elif colonne == 2:                
@@ -374,7 +375,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.lineEdit_correction_3, self.lineEdit_ecartype_3, self.lineEdit_incertitude_3, 
                         self.doubleSpinBox_resolution_3)
          
-                self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3)
+                self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3, self.doubleSpinBox_resolution_3)
             
             else:
                 pass                        
@@ -509,9 +510,13 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
             affichage = "Erreur dans les saisies effectuées"
             nom_lineedit_moyenne_etalon.setText(affichage)
     
-    def conformite(self, nom_comboBox_EMT, nom_lineEdit_correction, nom_lineedit_incertitude, nom_lineEdit_conformite):
+    def conformite(self, nom_comboBox_EMT, nom_lineEdit_correction, nom_lineedit_incertitude, nom_lineEdit_conformite, nom_doublespinbox_resolution):
         '''fct qui gere la declaration de conformite'''
-
+        
+        resolution = str(nom_doublespinbox_resolution.value())
+        U = nom_lineedit_incertitude.text()
+        U_arrondie = decimal.Decimal(U).quantize(decimal.Decimal(resolution), rounding=decimal.ROUND_UP)
+    
         if self.comboBox_famille_afficheur.currentText() == "Sonde alarme température" or self.comboBox_famille_afficheur.currentText() == "Afficheur de température":
             nom_brute_emt = nom_comboBox_EMT.currentText()
             if nom_brute_emt[:1] == "±":
@@ -539,22 +544,27 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         moyenne_afficheur_list = [self.lineEdit_moyenne_afficheur.text(), self.lineEdit_moyenne_afficheur_2.text(), self.lineEdit_moyenne_afficheur_3.text()]
         moyenne_corrections_list = [self.lineEdit_moyenne_etalon.text(), self.lineEdit_moyenne_etalon_2.text(), self.lineEdit_moyenne_etalon_3.text()]
         ecartype_corrections_list = [self.lineEdit_ecartype.text(), self.lineEdit_ecartype_2.text(), self.lineEdit_ecartype_3.text()]
-        conformite_list =[self.lineEdit_conformite.text(), self.lineEdit_conformite_2.text(), self.lineEdit_conformite_3.text()]
+        U_list = [self.lineEdit_incertitude.text(), self.lineEdit_incertitude_2.text(), self.lineEdit_incertitude_3.text()]
+        conformite_list = [self.lineEdit_conformite.text(), self.lineEdit_conformite_2.text(), self.lineEdit_conformite_3.text()]
+        emt_list = [self.comboBox_EMT.currentText(), self.comboBox_EMT_2.currentText(), self.comboBox_EMT_3.currentText()]
         afficheur = {}
+        client = self.db.recuperation_code_client_affectation(self.comboBox_identification.currentText())
 #        afficheur["n_certificat"] = 
-#        afficheur["affectation"] =
-#        afficheur["societe"] =
-#        afficheur["adresse"] =
-#        afficheur["code_postal"] = 
-#        afficheur["ville"] = 
+        
+        afficheur["societe"] = client[0]
+        afficheur["affectation"] = client[1]
+        afficheur["adresse"] = client[2]
+        afficheur["code_postal"] = client[3]
+        afficheur["ville"] = client[4]
         
         afficheur["identification_instrument"] = self.comboBox_identification.currentText()
         afficheur["n_serie"] = self.textEdit_n_serie.toPlainText ()
         afficheur["constructeur"] = self.lineEdit_constructeur.text()
         afficheur["designation"] = self.comboBox_famille_afficheur.currentText()
         afficheur["type"] = self.lineEdit_type.text()
-#        afficheur["resolution"] = 
+        afficheur["resolution"] = resolution_afficheur_list 
         afficheur["date_etalonnage"] = self.dateEdit.date().toString('dd/MM/yyyy')
+        afficheur["operateur"] = self.comboBox_cmr.currentText()
         
         if self.comboBox_famille_afficheur.currentText() == "Sonde alarme température":
             afficheur["n_mode_operatoire"] = "/006"
@@ -564,17 +574,26 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         afficheur["etalon"] = self.comboBox_ident_etalon.currentText()
         afficheur["ce_etalon"] = self.comboBox_ce_etal.currentText()
         afficheur["operateur"] = self.comboBox_cmr.currentText()
-        afficheur["renseignemment_complementaire"] = self.textEdit_renseignement_complementaire.toPlainText()
+        afficheur["renseignement_complementaire"] = self.textEdit_renseignement_complementaire.toPlainText()
+        print(self.textEdit_renseignement_complementaire.toPlainText())
+        
         afficheur["commentaire"] = self.textEdit_commentaire.toPlainText()
-        print("resolution {} , moyenne_etalon {}".format(resolution_afficheur_list, moyenne_etalon_list))
-
-#        i=0
-#        while i < self.nbr_pt:
-#            
-#            
-#            i+=1
-#            
-    
+        
+        afficheur["moyenne_etalon_corri"] = moyenne_etalon_list
+        afficheur["moyenne_instrum"] = moyenne_afficheur_list
+        afficheur["moyenne_correction"] = moyenne_corrections_list
+        afficheur["U"] = U_list
+        
+        afficheur["conformite"] = conformite_list
+        afficheur["emt"] = emt_list
+        afficheur["n_certificat"] = "DTC"
+        afficheur["nbr_pt_etalonnage"] = self.spinBox.value()
+        cvr = RapportAfficheur()
+        cvr.mise_en_forme_ce(afficheur)
+        
+        
+        
+        
     @pyqtSlot(str)
     def on_comboBox_EMT_3_activated(self, p0):
         """
@@ -584,7 +603,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.lineEdit_correction_3, self.lineEdit_ecartype_3, self.lineEdit_incertitude_3, 
                         self.doubleSpinBox_resolution_3)
                         
-        self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3)
+        self.conformite(self.comboBox_EMT_3, self.lineEdit_correction_3, self.lineEdit_incertitude_3, self.lineEdit_conformite_3, self.doubleSpinBox_resolution_3)
 
     
     @pyqtSlot(str)
@@ -596,7 +615,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                         self.lineEdit_correction_2, self.lineEdit_ecartype_2, self.lineEdit_incertitude_2, 
                         self.doubleSpinBox_resolution_2)
                         
-        self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2)
+        self.conformite(self.comboBox_EMT_2, self.lineEdit_correction_2, self.lineEdit_incertitude_2, self.lineEdit_conformite_2, self.doubleSpinBox_resolution_2)
    
     @pyqtSlot(str)
     def on_comboBox_EMT_activated(self, p0):
@@ -608,5 +627,5 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                             self.lineEdit_correction, self.lineEdit_ecartype, self.lineEdit_incertitude, 
                             self.doubleSpinBox_resolution)
                             
-        self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite)
+        self.conformite(self.comboBox_EMT, self.lineEdit_correction, self.lineEdit_incertitude, self.lineEdit_conformite, self.doubleSpinBox_resolution)
     

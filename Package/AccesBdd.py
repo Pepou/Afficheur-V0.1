@@ -111,7 +111,30 @@ class AccesBdd():
         for ele in result:
             service_site = ele
         return service_site
+    
+    def recuperation_code_client_affectation(self, identification):
+        '''fct qui recupere le code du client et affectation de l'instrument en fct de l'identification afficheur'''
         
+        table = Table("INSTRUMENTS", self.meta)
+        ins = select([table.c.CODE, table.c.AFFECTATION]).where(table .c.IDENTIFICATION == identification)
+        result = self.connection.execute(ins)    
+        
+        for ele in result:
+            code_client = ele[0]
+            affectation = ele[1]
+            
+        table = Table("CLIENTS", self.meta)
+        ins = select([table.c.SOCIETE, table.c.ADRESSE, table.c.CODE_POSTAL, table.c.VILLE]).where(table .c.CODE_CLIENT == code_client)
+        result = self.connection.execute(ins)      
+        
+        for ele in result:
+            societe = ele[0]
+            adresse = ele[1]
+            code_postal = ele[2]
+            ville = ele[3]
+            
+        return societe, affectation, adresse, code_postal, ville
+            
 #    def insert_table_polynome(self,  donnees):
 #        '''fct qui insert le poly dans la base '''
 #        
