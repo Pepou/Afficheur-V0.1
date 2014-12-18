@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Tasks SYSTEM "Tasks-5.1.dtd">
 <!-- eric5 tasks file for project Afficheur -->
-<!-- Saved: 2014-12-09, 18:19:40 -->
+<!-- Saved: 2014-12-18, 23:13:29 -->
 <Tasks version="5.1">
   <ProjectScanFilter></ProjectScanFilter>
   <Task priority="1" completed="False" type="1">
@@ -16,46 +16,46 @@
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-12-09, 18:14:09</Created>
+    <Created>2014-12-18, 22:54:57</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>77</Linenumber>
+      <Linenumber>78</Linenumber>
     </Resource>
   </Task>
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-12-09, 18:14:09</Created>
+    <Created>2014-12-18, 22:54:57</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>142</Linenumber>
+      <Linenumber>147</Linenumber>
     </Resource>
   </Task>
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-12-09, 18:14:09</Created>
+    <Created>2014-12-18, 22:54:57</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>275</Linenumber>
+      <Linenumber>280</Linenumber>
     </Resource>
   </Task>
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-12-09, 18:14:09</Created>
+    <Created>2014-12-18, 22:54:57</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>338</Linenumber>
+      <Linenumber>343</Linenumber>
     </Resource>
   </Task>
   <Task priority="1" completed="False" type="1">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2014-12-09, 18:14:09</Created>
+    <Created>2014-12-18, 22:54:57</Created>
     <Resource>
       <Filename>GUI/afficheurs.py</Filename>
-      <Linenumber>625</Linenumber>
+      <Linenumber>672</Linenumber>
     </Resource>
   </Task>
 </Tasks>

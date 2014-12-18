@@ -2,7 +2,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.engine import create_engine
-
+import numpy as np
 
 class AccesBdd():
     '''class gerant la bdd'''
@@ -134,45 +134,132 @@ class AccesBdd():
             ville = ele[3]
             
         return societe, affectation, adresse, code_postal, ville
-            
-#    def insert_table_polynome(self,  donnees):
-#        '''fct qui insert le poly dans la base '''
-#        
-#        table = Table("POLYNOME_CORRECTION", self.meta)
-#        ins = table.insert(returning=[table.c.ID_POLYNOME])
-#        result = self.connection.execute(ins, donnees)
-#
-#        id = []
-#        for ele in result:            
-#            id = ele          
-#        return id
+    
+    
+    def sauvegarde_table_afficheur_ctrl_admin(self, afficheur):
+        '''fct qui sauvegarde dans la table afficheur controle admin'''
+        donnees = {}
+        #recuperation id instrument*
+        table = Table("INSTRUMENTS", self.meta)
+        ins = select([table.c.ID_INSTRUM]).where(table .c.IDENTIFICATION == afficheur["identification_instrument"])
+        result = self.connection.execute(ins)    
         
-#    def insert_polynome_table_etalonnage(self,  donnees):
-#        '''fct qui insert les donnees de construction du poly dans la base '''
-#
-#        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
-#        ins = table.insert()
-#        self.connection.execute(ins, donnees)
-#
-#
-#    def recuperation_donnees_table_polynome_table_etalonnage(self, id_poly):
-#        '''fct pour recuperer les donnnees dans la table polynome-table-etal'''
-#        
-#        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
-#        ins = select([table.c.MOYENNE_ETALON_CORRI, table.c.MOYENNE_INSTRUM, table.c.CORRECTION, table.c.INCERTITUDE]).where(table.c.ID_POLYNOME == id_poly).order_by(table.c.ID_POLY_TABLE_ETAL)
-#        result = self.connection.execute(ins)
-#        
-#        donnees_poly_table_etal = []        
-#        for ele in result:   
-#            donnees_poly_table_etal.append(ele) 
-#        
-#        return donnees_poly_table_etal
-#        
-#    def delete_table_polynome_table_etalonnage(self, id_poly):
-#        '''efface les lignes de la table polynome_donnees_etal'''
-#        table = Table("POLYNOME_TABLE_ETALONNAGE", self.meta)
-#        ins = table.delete(table.c.ID_POLYNOME == id_poly)
-#        self.connection.execute(ins)
+        for ele in result:
+            id_instrum = ele[0]
+                
+        #recuperation id cmr
+        cmr = afficheur["operateur"].split()
+        table = Table("CORRESPONDANTS", self.meta)
+        ins = select([table.c.ID_CMR]).where(and_(table .c.NOM == cmr[0], table.c.PRENOM == cmr[1]))
+        result = self.connection.execute(ins)    
+        
+        for ele in result:
+            id_cmr = ele[0]
+        
+        #insertion dans table afficheur_controle admin
+        donnees["DATE_CONTROLE"] = afficheur["date_etalonnage"]
+        donnees["IDENTIFICATION"] = id_instrum
+        donnees["NOM_PROCEDURE"] = "PDL/PIL/SUR/MET/MO" + afficheur["n_mode_operatoire"]
+        donnees["NBR_PT"] = afficheur["nbr_pt_etalonnage"]
+        donnees["TECHNICIEN"] = id_cmr
+        donnees["ARCHIVAGE"] = False
+        
+        table = Table("AFFICHEUR_CONTROLE_ADMINISTRATIF", self.meta)
+        ins = table.insert(returning=[table.c.ID_AFFICHEUR_ADMINISTRATIF])
+        result = self.connection.execute(ins, donnees)
+        id = []
+        for ele in result:            
+            id = ele 
+        
+        #construction numero doc
+        if afficheur["designation"] == "Sonde alarme température":
+            prefix = "SAT"
+        elif afficheur["designation"] == "Afficheur de température":
+            prefix = "AFT"
+        elif afficheur["designation"] == "Afficheur de temps":
+            prefix = "AFM"
+        elif afficheur["designation"] == "Afficheur de vitesse":
+            prefix = "AFV"         
+        
+        num_doc = prefix + afficheur["num_doc_provisoire"]+"_"+ str(id[0])
+        
+        table = Table("AFFICHEUR_CONTROLE_ADMINISTRATIF", self.meta)
+        ins = table.update().where(table.c.ID_AFFICHEUR_ADMINISTRATIF == id[0]).values(NUM_DOC = num_doc)
+        result = self.connection.execute(ins, donnees)
+        
+        
+        n_ce = afficheur["ce_etalon"].split()   #permet de recuperer juste le n°ce etalon sinon n°CE etalon +la date
+        
+        #gestion insertion bdd table AFFICHEUR_CONTROLE_RESULTAT
+            # recuperation id etalon
+            #recuperation id instrument*
+        table = Table("INSTRUMENTS", self.meta)
+        ins = select([table.c.ID_INSTRUM]).where(table .c.IDENTIFICATION == afficheur["etalon"])
+        result = self.connection.execute(ins)    
+        
+        for ele in result:
+            id_etalon = ele[0]
+            
+        list_table_aff_result = []       
+        for i in range(0, donnees["NBR_PT"]):
+            dict_table_aff_result = {}
+            dict_table_aff_result["ID_AFF_CTRL_ADMIN"] = id[0]
+            dict_table_aff_result["NBR_PT_CTRL"] = donnees["NBR_PT"]
+            dict_table_aff_result["N_PT_CTRL"] = i +1
+            dict_table_aff_result["ID_ETALON"] = id_etalon
+            dict_table_aff_result["CE_ETALON"] = n_ce[0]
+            dict_table_aff_result["RESOLUTION"] =  afficheur["resolution"][i]
+            dict_table_aff_result["MOYENNE_ETALON_NC"] =  np.mean(afficheur["valeurs_etalon_nc"][i])
+            dict_table_aff_result["MOYENNE_ETALON_C"] = afficheur["moyenne_etalon_corri"][i]
+            dict_table_aff_result["MOYENNE_AFFICHEUR"] = afficheur["moyenne_instrum"][i]
+            dict_table_aff_result["MOYENNE_CORRECTION"] = afficheur["moyenne_correction"][i]
+            dict_table_aff_result["U"] =  afficheur["U"][i]
+            dict_table_aff_result["CONFORMITE"] =  afficheur["conformite"] [i]
+            dict_table_aff_result["ARCHIVAGE"] = False
+            dict_table_aff_result["EMT"] =  afficheur["emt"][i]
+            
+            list_table_aff_result.append(dict_table_aff_result)
+
+        #insertion table resultat
+        table = Table("AFFICHEUR_CONTROLE_RESULTAT", self.meta)
+        ins = table.insert()
+        result = self.connection.execute(ins, list_table_aff_result)
+
+        #○recherche id polynome
+            
+        table = Table("POLYNOME_CORRECTION", self.meta)
+        ins = select([table.c.ID_POLYNOME]).where(table .c.NUM_CERTIFICAT == n_ce[0])
+        result = self.connection.execute(ins)    
+        
+        for ele in result:
+            id_poly = ele[0]
+        
+        
+        
+        list_mesures = []
+        for i in range(0, donnees["NBR_PT"]):           
+            for j in range(0, len(afficheur["valeurs_etalon_nc"][i])):
+                dict_table_mesures = {}
+                
+                dict_table_mesures["ID_AFF_CTRL_ADMIN"] = id[0]
+                dict_table_mesures["ID_ETALON"] = id_etalon
+                dict_table_mesures["ID_POLYNOME"] = id_poly
+                dict_table_mesures["ETALON_NC"] = afficheur["valeurs_etalon_nc"][i][j]
+                dict_table_mesures["ETALON_C"] = afficheur["valeurs_etalon_c"][i][j]
+                dict_table_mesures["AFFICHEUR"] = afficheur["valeurs_afficheur"][i][j]
+                dict_table_mesures["NBR_PTS"] = donnees["NBR_PT"]
+                dict_table_mesures["N_PT"] = i + 1
+                dict_table_mesures["NBR_MESURE"] = len(afficheur["valeurs_etalon_nc"][i])
+                dict_table_mesures["N_MESURE"] = j+1
+                list_mesures.append(dict_table_mesures)
+
+        #insertion table resultat
+        table = Table("AFFICHEUR_CONTROLE_MESURES", self.meta)
+        ins = table.insert()
+        result = self.connection.execute(ins, list_mesures)
+        
+        
+        return num_doc
         
     def recuperation_polynomes_etal(self, identification):
         '''fct qui va recuperer dans la table polynome corrections

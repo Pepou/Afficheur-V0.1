@@ -29,8 +29,8 @@ class RapportAfficheur:
     
 ################################################################################################
 
-#    def mise_en_forme_ce(self, donnees, path,  nom_fichier):
-    def mise_en_forme_ce(self, donnees):
+    def mise_en_forme_ce(self, donnees, path,  nom_fichier):
+#    def mise_en_forme_ce(self, donnees):
         '''fonction qui charge le document demandé et ecrit les donnees à passer sous forme de dictionnaire aux signets presents dans le doc
         Il arrondi à la resolution les donnees grace à la fonction traitement des donneees et traitement U'''
         
@@ -53,6 +53,7 @@ class RapportAfficheur:
 
         doc.Bookmarks("adresse").Range.Text = donnees["adresse"]
         doc.Bookmarks("code_postal_ville").Range.Text = str(donnees["code_postal"]) +" "+ donnees["ville"]
+        
                 
         doc.Bookmarks("identification_instrument").Range.Text = donnees["identification_instrument"]
         doc.Bookmarks("identification_instrument_2").Range.Text = donnees["identification_instrument"]
@@ -66,36 +67,30 @@ class RapportAfficheur:
                 
         doc.Bookmarks("designation").Range.Text = donnees["designation"]
         doc.Bookmarks("designation_2").Range.Text = donnees["designation"]
+        
+        if donnees["designation"] == "Sonde alarme température" or donnees["designation"] == "Afficheur de température":
+            unite = "°C"
+        elif donnees["designation"] == "Afficheur de temps":
+            unite = "s"
+        elif donnees["designation"] == "Afficheur de vitesse":
+            unite = " tr/min"
                 
         doc.Bookmarks("type").Range.Text = donnees["type"]
                 
         doc.Bookmarks("resolution").Range.Text = numpy.amax(donnees["resolution"])
                 
         doc.Bookmarks("date_etalonnage").Range.Text = donnees["date_etalonnage"]
+        doc.Bookmarks("ville").Range.Text = str(donnees["ville"])
                 
 #        doc.Bookmarks("milieu").Range.Text = donnees["milieu"]
                 
         doc.Bookmarks("n_mode_operatoire").Range.Text = donnees["n_mode_operatoire"]
                 
-        doc.Bookmarks("operateur").Range.Text = donnees["operateur"]
+        doc.Bookmarks("operateur").Range.Text = donnees["operateur"].encode('latin-1')
+        print("operateur {}".format(donnees["operateur"]))
                 
-        #preparation donnees generateurs
-#        nbr_generateur = len(donnees["generateur"])
-#        i = 0
-#        while i< nbr_generateur:
-#            donnees["generateur"].insert((i+1),"," )
-#            i+=2
-#        for ele in donnees["generateur"]:
-#            doc.Bookmarks("generateur").Range.Text = " "+str(ele)
-            
-        #preparation donnees etalons
-#        nbr_etalon = len(donnees["etalon"])
-#        i = 0
-#        while i< nbr_etalon:
-#            donnees["etalon"].insert((i+1),"," ) #permet d'inserer une virgule
-#            i+=2
-#        for ele in donnees["etalon"]:
-        doc.Bookmarks("etalon").Range.Text = donnees["etalon"]
+
+        doc.Bookmarks("etalon").Range.Text = donnees["etalon"] + donnees["ce_etalon"]
         
         doc.Bookmarks("renseignemment_complementaire").Range.Text = donnees["renseignement_complementaire"]
         doc.Bookmarks("Etat_reception").Range.Text = donnees["commentaire"]
@@ -114,19 +109,19 @@ class RapportAfficheur:
         table.Borders.Enable = True            
 
         
-        table.Cell(1,1).Range.Text= "Etalon"
+        table.Cell(1,1).Range.Text= "Etalon" + " " + "(" + unite +")"
         table.Cell(1,1).VerticalAlignment = win32.constants.wdCellAlignVerticalCenter
         
-        table.Cell(1,2).Range.Text = "Mesure"
+        table.Cell(1,2).Range.Text = "Mesure" +  " " + "(" + unite +")"
         table.Cell(1,2).VerticalAlignment = win32.constants.wdCellAlignVerticalCenter
         
-        table.Cell(1,3).Range.Text = "Correction"
+        table.Cell(1,3).Range.Text = "Correction" +  " " + "(" + unite +")"
         table.Cell(1,3).VerticalAlignment = win32.constants.wdCellAlignVerticalCenter
         
-        table.Cell(1,4).Range.Text = "Incertitude"
+        table.Cell(1,4).Range.Text = "Incertitude k = 2" +  " " + "(" + unite +")"
         table.Cell(1,4).VerticalAlignment = win32.constants.wdCellAlignVerticalCenter
         
-        table.Cell(1,5).Range.Text= "EMT"
+        table.Cell(1,5).Range.Text= "EMT"  +  " " + "(" + unite +")"
         table.Cell(1,5).VerticalAlignment = win32.constants.wdCellAlignVerticalCenter
         
         table.Cell(1,6).Range.Text= "Conformité"
@@ -158,13 +153,13 @@ class RapportAfficheur:
             
 
         
-#        sauvegarde_docx = path + "/" + str(nom_fichier) +".docx"
-#        sauvegarde_pdf = path + "/" + str(nom_fichier) +".pdf"
-#                
-#        doc.SaveAs(sauvegarde_docx)
-#        doc.SaveAs(sauvegarde_pdf, FileFormat= 17) #17 =PDF
-#        doc.Close()
-#        word.Application.Quit()
+        sauvegarde_docx = path + "/" + str(nom_fichier) +".docx"
+        sauvegarde_pdf = path + "/" + str(nom_fichier) +".pdf"
+                
+        doc.SaveAs(sauvegarde_docx)
+        doc.SaveAs(sauvegarde_pdf, FileFormat= 17) #17 =PDF
+        doc.Close()
+        word.Application.Quit()
             
 
 #######################################################################

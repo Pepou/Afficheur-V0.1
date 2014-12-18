@@ -9,9 +9,10 @@ from PyQt4.QtGui import QMainWindow
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QFileDialog
 from .Ui_afficheurs import Ui_MainWindow
 from Package.AccesBdd import AccesBdd
-from Package.RapportAfficheur import RapportAfficheur
+#from Package.RapportAfficheur import RapportAfficheur
 import decimal
 import numpy as np
 
@@ -79,6 +80,11 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         
         type_afficheur = str(self.comboBox_famille_afficheur.currentText())
         
+        #nettoyage combobox emt
+        self.comboBox_EMT.clear()
+        self.comboBox_EMT_2.clear()
+        self.comboBox_EMT_3.clear()
+        
         #recherche domaine de mesure pour etalons
         if type_afficheur == "Sonde alarme température" or type_afficheur == "Afficheur de température":
             domaine_mesure = "Température"
@@ -92,8 +98,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
             designation_etalon = "Chronomètre/minuterie de travail"
             self.comboBox_EMT.addItems(self.EMT_temps)
             self.comboBox_EMT_2.addItems(self.EMT_temps)
-            self.comboBox_EMT_3.addItems(self.EMT_temps)
-            
+            self.comboBox_EMT_3.addItems(self.EMT_temps)            
             
         elif type_afficheur == "Afficheur de vitesse":
             domaine_mesure = "Vitesse"
@@ -411,18 +416,20 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
             #calcul automatique moyenne etalon corrigé
             valeurs_etalon_corriges = []
             valeurs_afficheur = []
-            
-            for i in range (0, 6):
+            nbr_mesure = self.spinBox_2.value()
+           
+            for i in range (0, nbr_mesure):
                 if nom_tableau.item(i, 1) is not None:
                     valeurs_etalon_corriges.append(decimal.Decimal(nom_tableau.item(i, 1).text()))
                 else:
                     pass
+            
             moyenne_etal_corri = np.mean(valeurs_etalon_corriges)
             nom_lineedit_moyenne_etalon.setText(str(moyenne_etal_corri))
                 
             # calcul moyenne afficheur:
             
-            for i in range(0, 6):
+            for i in range(0, nbr_mesure):
                 if nom_tableau.item(i, 2) is not None:
                     valeurs_afficheur.append(decimal.Decimal(nom_tableau.item(i, 2).text()))
                 else:
@@ -434,13 +441,16 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
             #Corrections , moyenne des corrections,ecart type_afficheur:
             
             corrections =[]
-            for i in range(0, 6):
+            for i in range(0, nbr_mesure):
                 if nom_tableau.item(i, 1) is not None and nom_tableau.item(i, 2) is not None:
                     corrections.append(decimal.Decimal(nom_tableau.item(i, 1).text())- decimal.Decimal(nom_tableau.item(i, 2).text()))
                 else:
                     pass
             moyenne_corrections = np.mean(corrections)
-            ecartype_corrections = np.std(corrections , ddof=1)
+            if nbr_mesure >1:
+                ecartype_corrections = np.std(corrections , ddof=1)
+            else:
+                ecartype_corrections = 0
             nom_lineedit_correction.setText(str(moyenne_corrections))
             nom_lineedit_ecartype.setText(str(ecartype_corrections))
             
@@ -462,12 +472,12 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                 table_etal_tlue_correction = self.db.recuperation_corrections_etalonnage_temp(identification_etalon, numero_ce[0])
                 tlue_etalonnage = [x[0] for x in table_etal_tlue_correction ]
                 correction_etalonnage = [decimal.Decimal(x[1]) for x in table_etal_tlue_correction ]
- 
+    
                 if self.ordre_poly_etalon == 1:
                     correction_modelisee = [decimal.Decimal(x * self.coeff_a_poly_etalon + self.coeff_b_poly_etalon) for x in tlue_etalonnage]
                 else:                    
                     correction_modelisee = [decimal.Decimal(x * x* self.coeff_a_poly_etalon + x * self.coeff_b_poly_etalon +self.coeff_c_poly_etalon) for x in tlue_etalonnage]
-
+    
                 residu = []
                 for i in range(0, len(correction_etalonnage)):
                     valeur_residu = correction_etalonnage[i]-correction_modelisee[i]
@@ -486,7 +496,7 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
                     #sat
                     #####################################################################################
                         #uresolution
-
+    
                 resolution = nom_doublespinbox.value()#float(self.db.recuperation_resolution_etalon(ident_sat))
                 
                 u_resolution = resolution/(2*np.sqrt(3))
@@ -539,59 +549,96 @@ class Afficheurs(QMainWindow, Ui_MainWindow):
         """
         fct qui enregistre les resultats dans la bdd et genere le rapport
         """
-        resolution_afficheur_list = [self.doubleSpinBox_resolution.value(), self.doubleSpinBox_resolution_2.value(), self.doubleSpinBox_resolution_3.value()]
-        moyenne_etalon_list = [self.lineEdit_moyenne_etalon.text(), self.lineEdit_moyenne_etalon_2.text(), self.lineEdit_moyenne_etalon_3.text()]
-        moyenne_afficheur_list = [self.lineEdit_moyenne_afficheur.text(), self.lineEdit_moyenne_afficheur_2.text(), self.lineEdit_moyenne_afficheur_3.text()]
-        moyenne_corrections_list = [self.lineEdit_moyenne_etalon.text(), self.lineEdit_moyenne_etalon_2.text(), self.lineEdit_moyenne_etalon_3.text()]
-        ecartype_corrections_list = [self.lineEdit_ecartype.text(), self.lineEdit_ecartype_2.text(), self.lineEdit_ecartype_3.text()]
-        U_list = [self.lineEdit_incertitude.text(), self.lineEdit_incertitude_2.text(), self.lineEdit_incertitude_3.text()]
-        conformite_list = [self.lineEdit_conformite.text(), self.lineEdit_conformite_2.text(), self.lineEdit_conformite_3.text()]
-        emt_list = [self.comboBox_EMT.currentText(), self.comboBox_EMT_2.currentText(), self.comboBox_EMT_3.currentText()]
-        afficheur = {}
-        client = self.db.recuperation_code_client_affectation(self.comboBox_identification.currentText())
-#        afficheur["n_certificat"] = 
         
-        afficheur["societe"] = client[0]
-        afficheur["affectation"] = client[1]
-        afficheur["adresse"] = client[2]
-        afficheur["code_postal"] = client[3]
-        afficheur["ville"] = client[4]
+        dossier = QFileDialog.getExistingDirectory(None ,  "Selectionner le dossier de sauvegarde des Rapports", 'y:/1.METROLOGIE/0.ARCHIVES ETALONNAGE-VERIFICATIONS/1-TEMPERATURE/')
         
-        afficheur["identification_instrument"] = self.comboBox_identification.currentText()
-        afficheur["n_serie"] = self.textEdit_n_serie.toPlainText ()
-        afficheur["constructeur"] = self.lineEdit_constructeur.text()
-        afficheur["designation"] = self.comboBox_famille_afficheur.currentText()
-        afficheur["type"] = self.lineEdit_type.text()
-        afficheur["resolution"] = resolution_afficheur_list 
-        afficheur["date_etalonnage"] = self.dateEdit.date().toString('dd/MM/yyyy')
-        afficheur["operateur"] = self.comboBox_cmr.currentText()
-        
-        if self.comboBox_famille_afficheur.currentText() == "Sonde alarme température":
-            afficheur["n_mode_operatoire"] = "/006"
-        else:
-            afficheur["n_mode_operatoire"] = "/002"
+        if dossier !="":
+            
+            resolution_afficheur_list = [self.doubleSpinBox_resolution.value(), self.doubleSpinBox_resolution_2.value(), self.doubleSpinBox_resolution_3.value()]
+            moyenne_etalon_list = [self.lineEdit_moyenne_etalon.text(), self.lineEdit_moyenne_etalon_2.text(), self.lineEdit_moyenne_etalon_3.text()]
+            moyenne_afficheur_list = [self.lineEdit_moyenne_afficheur.text(), self.lineEdit_moyenne_afficheur_2.text(), self.lineEdit_moyenne_afficheur_3.text()]
+            moyenne_corrections_list = [self.lineEdit_correction.text(), self.lineEdit_correction_2.text(), self.lineEdit_correction_3.text()]
+            ecartype_corrections_list = [self.lineEdit_ecartype.text(), self.lineEdit_ecartype_2.text(), self.lineEdit_ecartype_3.text()]
+            U_list = [self.lineEdit_incertitude.text(), self.lineEdit_incertitude_2.text(), self.lineEdit_incertitude_3.text()]
+            conformite_list = [self.lineEdit_conformite.text(), self.lineEdit_conformite_2.text(), self.lineEdit_conformite_3.text()]
+            emt_list = [self.comboBox_EMT.currentText(), self.comboBox_EMT_2.currentText(), self.comboBox_EMT_3.currentText()]
+            afficheur = {}
+            client = self.db.recuperation_code_client_affectation(self.comboBox_identification.currentText())
+    #        afficheur["n_certificat"] = 
+            
+            afficheur["societe"] = client[0]
+            afficheur["affectation"] = client[1]
+            afficheur["adresse"] = client[2]
+            afficheur["code_postal"] = client[3]
+            afficheur["ville"] = client[4]
+            
+            afficheur["identification_instrument"] = self.comboBox_identification.currentText()
+            afficheur["n_serie"] = self.textEdit_n_serie.toPlainText ()
+            afficheur["constructeur"] = self.lineEdit_constructeur.text()
+            afficheur["designation"] = self.comboBox_famille_afficheur.currentText()
+            afficheur["type"] = self.lineEdit_type.text()
+            afficheur["resolution"] = resolution_afficheur_list 
+            afficheur["date_etalonnage"] = self.dateEdit.date().toString('dd/MM/yyyy')
+            afficheur["num_doc_provisoire"] = self.dateEdit.date().toString('yyyyMM')
+            afficheur["operateur"] = self.comboBox_cmr.currentText()
+            
+            if self.comboBox_famille_afficheur.currentText() == "Sonde alarme température":
+                afficheur["n_mode_operatoire"] = "/006"
+            else:
+                afficheur["n_mode_operatoire"] = "/002"
+    
+            afficheur["etalon"] = self.comboBox_ident_etalon.currentText()
+            afficheur["ce_etalon"] = self.comboBox_ce_etal.currentText()
+            afficheur["operateur"] = self.comboBox_cmr.currentText()
+            afficheur["renseignement_complementaire"] = self.textEdit_renseignement_complementaire.toPlainText()
+                        
+            afficheur["commentaire"] = self.textEdit_commentaire.toPlainText()
+            
+            afficheur["moyenne_etalon_corri"] = moyenne_etalon_list
+            afficheur["moyenne_instrum"] = moyenne_afficheur_list
+            afficheur["moyenne_correction"] = moyenne_corrections_list
+            afficheur["U"] = U_list
+            
+            afficheur["conformite"] = conformite_list
+            afficheur["emt"] = emt_list
+            
+            afficheur["nbr_pt_etalonnage"] = self.spinBox.value()
+            
+            #recuperation donneees dans les tableaux
+            nom_tableau = [self.tableWidget, self.tableWidget_2, self.tableWidget_3]
+            nbr_mesure = self.spinBox_2.value()
+            
+            list_valeurs_etalon_non_corriges = []
+            list_valeurs_etalon_corriges = []
+            list_valeurs_afficheur = []
+            item=QtGui.QTableWidgetItem()
 
-        afficheur["etalon"] = self.comboBox_ident_etalon.currentText()
-        afficheur["ce_etalon"] = self.comboBox_ce_etal.currentText()
-        afficheur["operateur"] = self.comboBox_cmr.currentText()
-        afficheur["renseignement_complementaire"] = self.textEdit_renseignement_complementaire.toPlainText()
-        print(self.textEdit_renseignement_complementaire.toPlainText())
+            for i in range(0, afficheur["nbr_pt_etalonnage"]):
+                valeurs_etalon_non_corriges = []
+                valeurs_etalon_corriges = []
+                valeurs_afficheur = []
+                
+                for j in range (0, nbr_mesure):                    
+                    valeurs_etalon_non_corriges.append(decimal.Decimal(nom_tableau[i].item(j, 0).text()))                     
+                    valeurs_etalon_corriges.append(decimal.Decimal(nom_tableau[i].item(j, 1).text()))                   
+                    valeurs_afficheur.append(decimal.Decimal(nom_tableau[i].item(j, 2).text()))  
+                
+                list_valeurs_etalon_non_corriges.append(valeurs_etalon_non_corriges)
+                list_valeurs_etalon_corriges.append(valeurs_etalon_corriges)
+                list_valeurs_afficheur.append(valeurs_afficheur)
+           
+
+            afficheur["valeurs_etalon_nc"] = list_valeurs_etalon_non_corriges
+            afficheur["valeurs_etalon_c"] = list_valeurs_etalon_corriges
+            afficheur["valeurs_afficheur"] = list_valeurs_afficheur            
+            
+            afficheur["n_certificat"] = self.db.sauvegarde_table_afficheur_ctrl_admin(afficheur)            
+            
+#            cvr = RapportAfficheur()
+#            cvr.mise_en_forme_ce(afficheur, dossier, afficheur["n_certificat"])
         
-        afficheur["commentaire"] = self.textEdit_commentaire.toPlainText()
-        
-        afficheur["moyenne_etalon_corri"] = moyenne_etalon_list
-        afficheur["moyenne_instrum"] = moyenne_afficheur_list
-        afficheur["moyenne_correction"] = moyenne_corrections_list
-        afficheur["U"] = U_list
-        
-        afficheur["conformite"] = conformite_list
-        afficheur["emt"] = emt_list
-        afficheur["n_certificat"] = "DTC"
-        afficheur["nbr_pt_etalonnage"] = self.spinBox.value()
-        cvr = RapportAfficheur()
-        cvr.mise_en_forme_ce(afficheur)
-        
-        
+        else:
+            pass
         
         
     @pyqtSlot(str)

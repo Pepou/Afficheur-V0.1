@@ -414,6 +414,29 @@
             </property>
            </widget>
           </item>
+          <item row="12" column="1">
+           <widget class="QSpinBox" name="spinBox_2">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0">
+           <widget class="QLabel" name="label_37">
+            <property name="font">
+             <font>
+              <family>Calibri</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Nombre de mesure par point</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>

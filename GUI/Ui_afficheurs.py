@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Travail\EFS\Travail accreditation\SQ\Developpement Informatique\Afficheur-V0.1\GUI\afficheurs.ui'
 #
-# Created: Fri Dec  5 11:49:01 2014
+# Created: Mon Dec 15 09:46:19 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -218,6 +218,18 @@ class Ui_MainWindow(object):
         self.label_36.setFont(font)
         self.label_36.setObjectName(_fromUtf8("label_36"))
         self.formLayout.setWidget(8, QtGui.QFormLayout.LabelRole, self.label_36)
+        self.spinBox_2 = QtGui.QSpinBox(self.tab)
+        self.spinBox_2.setMinimum(1)
+        self.spinBox_2.setMaximum(6)
+        self.spinBox_2.setObjectName(_fromUtf8("spinBox_2"))
+        self.formLayout.setWidget(12, QtGui.QFormLayout.FieldRole, self.spinBox_2)
+        self.label_37 = QtGui.QLabel(self.tab)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Calibri"))
+        font.setPointSize(12)
+        self.label_37.setFont(font)
+        self.label_37.setObjectName(_fromUtf8("label_37"))
+        self.formLayout.setWidget(12, QtGui.QFormLayout.LabelRole, self.label_37)
         self.verticalLayout_7.addLayout(self.formLayout)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -662,6 +674,7 @@ class Ui_MainWindow(object):
         self.label_34.setText(_translate("MainWindow", "Type", None))
         self.label_35.setText(_translate("MainWindow", "Renseignement complementaire", None))
         self.label_36.setText(_translate("MainWindow", "Commentaire", None))
+        self.label_37.setText(_translate("MainWindow", "Nombre de mesure par point", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Configuration", None))
         self.label.setText(_translate("MainWindow", "Resolution", None))
         self.label_2.setText(_translate("MainWindow", "EMT", None))
